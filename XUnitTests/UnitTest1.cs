@@ -27,7 +27,8 @@ namespace Betsson.OnlineWallets.Services
             Balance result = await walletService.GetBalanceAsync();
 
             //Assert
-
+            Assert.NotNull(result);
+            Assert.Equal(150m, result.Amount);
         }
     }
 }
