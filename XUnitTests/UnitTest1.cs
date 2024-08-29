@@ -1,10 +1,11 @@
-namespace XUnitTests
+namespace Betsson.OnlineWallets.Services
 {
-    public class UnitTest1
+    public class OnlineWalletServiceTests
     {
         [Fact]
-        public void Test1()
+        public async Task GetBalanceAsync_ShouldReturnCorrectBalance_WhenTransactionsExist()
         {
+            //Arrange
 
         }
     }
