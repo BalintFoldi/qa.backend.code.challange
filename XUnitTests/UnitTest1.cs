@@ -63,11 +63,11 @@ namespace Betsson.OnlineWallets.Services
                 }
             };
 
-            var walletservice = new OnlineWalletService(fakeRepository);
+            var walletService = new OnlineWalletService(fakeRepository);
             var deposit = new Deposit { Amount = 30m };
 
             //Act
-            Balance newBalance = await walletservice.DepositFundsAsync(deposit);
+            Balance newBalance = await walletService.DepositFundsAsync(deposit);
 
             //Assert
             Assert.Equal(180m, newBalance.Amount); // 150 + 30 = 180
@@ -88,16 +88,36 @@ namespace Betsson.OnlineWallets.Services
                 }
             };
 
-            var walletservice = new OnlineWalletService(fakeRepository);
+            var walletService = new OnlineWalletService(fakeRepository);
             var withdrawal = new Withdrawal { Amount = 20m };
 
             //Act
-            Balance newBalance = await walletservice.WithdrawFundsAsync(withdrawal);
+            Balance newBalance = await walletService.WithdrawFundsAsync(withdrawal);
 
             //Assert
             Assert.Equal(130m, newBalance.Amount); // 150 - 20 = 130
             Assert.Single(fakeRepository.Entries); //Ensure the new entry was added
             Assert.Equal(-20m, fakeRepository.Entries[0].Amount); // The withdrawal amount should be negative
+        }
+
+        [Fact]
+        public async Task WithdrawFundsAsync_ShouldThrowException_WhenInsufficientBalance()
+        {
+            //Arrange
+            var fakeRepository = new FakeOnlineWalletRepository 
+            {
+                LastEntry = new OnlineWalletEntry
+                {
+                    BalanceBefore = 100m,
+                    Amount = 50m
+                }
+            };
+
+            var walletService = new OnlineWalletService(fakeRepository);
+            var withdrawal = new Withdrawal { Amount = 200m }; // More than available balance
+
+            //Act & Assert
+            await Assert.ThrowsAsync<InsufficientBalanceException>(() => walletService.WithdrawFundsAsync(withdrawal));
         }
     }
 }
