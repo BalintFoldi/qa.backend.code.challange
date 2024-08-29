@@ -28,7 +28,26 @@ namespace Betsson.OnlineWallets.Services
 
             //Assert
             Assert.NotNull(result);
-            Assert.Equal(150m, result.Amount);
+            Assert.Equal(150m, result.Amount); // 100 + 50 = 150
+        }
+
+        [Fact]
+        public async Task GetBalanceAsync_ShouldReturnZeroBalance_WhenNoTransactionsExist()
+        {
+            // Arrange
+            var fakeRepository = new FakeOnlineWalletRepository
+            {
+                LastEntry = null  // No transaction
+            };
+
+            var walletService = new OnlineWalletService(fakeRepository);
+
+            // Act
+            Balance result = await walletService.GetBalanceAsync();
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(0m, result.Amount);  // No transactions, so balance should be 0
         }
     }
 }
