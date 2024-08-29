@@ -1,11 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
-using RestSharp;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using RestSharp;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Betsson.OnlineWallets.Services
 {
@@ -43,7 +37,22 @@ namespace Betsson.OnlineWallets.Services
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.NotNull(response.Content);
+        }
 
+        [Fact]
+        public async void Test_Withdraw_ShouldReturnSuccess()
+        {
+            // Arrange
+            var client = new RestClient(BaseUrl);
+            var request = new RestRequest("withdraw", Method.Post);
+            request.AddJsonBody(new { amount = 50 }); // Example payload
+
+            // Act
+            RestResponse response = await client.ExecuteAsync(request);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.NotNull(response.Content);
         }
     }
 }
